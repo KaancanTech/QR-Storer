@@ -386,7 +386,6 @@ struct AddQRCodeView: View {
                 // Кнопки выбора источника
                 HStack(spacing: 20) {
                     Button(action: {
-                        usingCamera = false
                         showingImagePicker = true
                     }) {
                         Text("Choose from Gallery")
@@ -398,7 +397,6 @@ struct AddQRCodeView: View {
                     
                     Button(action: {
                         usingCamera = true
-                        showingImagePicker = true
                     }) {
                         Text("Take Photo")
                             .foregroundColor(.white)
@@ -456,9 +454,13 @@ struct AddQRCodeView: View {
             }
             .navigationTitle("Add QR Code")
             .sheet(isPresented: $showingImagePicker) {
-                ImagePicker(image: $selectedImage, useCamera: usingCamera)
+                ImagePicker(image: $selectedImage, useCamera: false)
+            }
+            .sheet(isPresented: $usingCamera) {
+                ImagePicker(image: $selectedImage, useCamera: true)
             }
         }
+        
     }
     
     func saveQRCode() {
@@ -494,6 +496,7 @@ struct ImagePicker: UIViewControllerRepresentable {
     var useCamera: Bool
     
     func makeUIViewController(context: Context) -> UIImagePickerController {
+        print("👉 useCamera =", useCamera)
         let picker = UIImagePickerController()
         picker.delegate = context.coordinator
         picker.sourceType = useCamera ? .camera : .photoLibrary
